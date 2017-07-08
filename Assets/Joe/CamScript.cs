@@ -12,22 +12,39 @@ public class CamScript : MonoBehaviour {
 
     public int initialBackdrop;
     public GameObject[] backgrounds;
+    public GameObject[] toys;
 
     [HideInInspector]
     public bool moveCamera;
 
+    // Smooth camera stuff
+    public float dampTime = 0.15f;
+    private Vector3 velocity = Vector3.zero;
+    public Transform target;
+    public Camera camera;
+    public Vector3 initialPosition;
+
     // Use this for initialization
     void Start () {
-        GameObject new_bg;
+        initialPosition = transform.position;
+        camera = GetComponent<Camera>();
+
+        GameObject new_bg, new_toy;
 
         // Initial background at the same position as camera, but z of 0f.
         Vector3 bg_position = transform.position;
         bg_position.z = 0f;
+        // Toy is (initially) z of -3f.
+        Vector3 toy_position = transform.position;
+        toy_position.z = -3f;
 
         new_bg = Instantiate(backgrounds[initialBackdrop], bg_position, Quaternion.identity);
         backdrop bdScript = new_bg.GetComponent<backdrop>();
         if (bdScript) bdScript.bdNumber = initialBackdrop;
-     }
+        new_toy = Instantiate(toys[initialBackdrop], toy_position, Quaternion.identity);
+        toy toyScript = new_toy.GetComponent<toy>();
+        toyScript.backdrop = new_bg;
+    }
 
     void Update() {
         if (moveCameraDirection != 0f && Input.GetKey("space")) {
@@ -44,6 +61,8 @@ public class CamScript : MonoBehaviour {
         }
         if (moveCamera) {
             MoveCamera();
+        } else {
+            SmoothFollowCamera();
         }
     }
 
@@ -54,16 +73,18 @@ public class CamScript : MonoBehaviour {
         if (bdScript) {
             bdScript.hasCamera = false;
             // If I have a neighbor not on camera, destroy it.
-            if (bdScript.prev && !bdScript.prev.GetComponent<backdrop>().hasCamera) {
-                GameObject destroyMe = bdScript.prev;
-                bdScript.prev = null;
-                Destroy(destroyMe);
-            }
-            if (bdScript.next && !bdScript.next.GetComponent<backdrop>().hasCamera) {
-                GameObject destroyMe = bdScript.next;
-                bdScript.next = null;
-                Destroy(destroyMe);
-            }
+        //    if (bdScript.prev && !bdScript.prev.GetComponent<backdrop>().hasCamera) {
+        //        GameObject destroyMe = bdScript.prev;
+        //        bdScript.prev = null;
+        //        Debug.Log("I want to destroy (prev) " + destroyMe);
+        //        destroyMe.GetComponent<backdrop>().destroyMyself = true;
+        //    }
+        //    if (bdScript.next && !bdScript.next.GetComponent<backdrop>().hasCamera) {
+        //        GameObject destroyMe = bdScript.next;
+        //        bdScript.next = null;
+        //        Debug.Log("I want to destroy (next) " + destroyMe);
+        //        destroyMe.GetComponent<backdrop>().destroyMyself = true;
+        //    }
         }
     }
 
@@ -83,7 +104,7 @@ public class CamScript : MonoBehaviour {
                 // Instantiate the next backdrop
                 int newBdNumber = bdScript.bdNumber + 1;
                 if (newBdNumber >= backgrounds.Length) newBdNumber = 0;
-                GameObject newBackdrop = Instantiate(backgrounds[newBdNumber], newPosition, Quaternion.identity);
+                GameObject newBackdrop = bdScript.next = Instantiate(backgrounds[newBdNumber], newPosition, Quaternion.identity);
                 // Move it half its width to the right to line up
                 SpriteRenderer srendNew = newBackdrop.GetComponent<SpriteRenderer>();
                 newPosition.x += srendNew.bounds.extents.x;
@@ -91,7 +112,6 @@ public class CamScript : MonoBehaviour {
                 // Now assign the number and neighborly links
                 backdrop newBdScript = newBackdrop.GetComponent<backdrop>();
                 newBdScript.bdNumber = newBdNumber;
-                bdScript.next = newBackdrop;
                 newBdScript.prev = other.gameObject;
             }
             if (!bdScript.prev) {
@@ -102,7 +122,7 @@ public class CamScript : MonoBehaviour {
                 // Instantiate the next backdrop
                 int newBdNumber = bdScript.bdNumber - 1;
                 if (newBdNumber < 0) newBdNumber = backgrounds.Length - 1;
-                GameObject newBackdrop = Instantiate(backgrounds[newBdNumber], newPosition, Quaternion.identity);
+                GameObject newBackdrop = bdScript.prev = Instantiate(backgrounds[newBdNumber], newPosition, Quaternion.identity);
                 // Move it half its width to the right to line up
                 SpriteRenderer srendNew = newBackdrop.GetComponent<SpriteRenderer>();
                 newPosition.x -= srendNew.bounds.extents.x;
@@ -110,7 +130,6 @@ public class CamScript : MonoBehaviour {
                 // Now assign the number and neighborly links
                 backdrop newBdScript = newBackdrop.GetComponent<backdrop>();
                 newBdScript.bdNumber = newBdNumber;
-                bdScript.prev = newBackdrop;
                 newBdScript.next = other.gameObject;
             }
 
@@ -131,4 +150,46 @@ public class CamScript : MonoBehaviour {
             speed = maxSpeed;
 
     }
+
+    void SmoothFollowCamera() {
+        // find a target if I can
+        target = null;
+        GameObject[] foundObjects;
+        for (int i = 0; i < toys.Length; i++) {
+            foundObjects = GameObject.FindGameObjectsWithTag("toy");
+            foreach(GameObject foundObject in foundObjects) {
+                if (foundObject.GetComponent<toy>().Interactive)
+                    target = foundObject.transform;
+            }
+        }
+        if (target) {
+            Vector3 point = camera.WorldToViewportPoint(target.position);
+            Vector3 delta = target.position - camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
+            Vector3 destination = transform.position + delta;
+            destination.y = initialPosition.y; destination.z = initialPosition.z;
+            transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
+        }
+
+
+    }
+
+    // code stolen from http://answers.unity3d.com/questions/29183/2d-camera-smooth-follow.html
+    //public class SmoothCamera2D : MonoBehaviour {
+
+    //    public float dampTime = 0.15f;
+    //    private Vector3 velocity = Vector3.zero;
+    //    public Transform target;
+
+    //    // Update is called once per frame
+    //    void Update() {
+    //        if (target) {
+    //            Vector3 point = camera.WorldToViewportPoint(target.position);
+    //            Vector3 delta = target.position - camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
+    //            Vector3 destination = transform.position + delta;
+    //            transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
+    //        }
+
+    //    }
+    //}
+
 }
