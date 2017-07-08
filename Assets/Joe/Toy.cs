@@ -21,8 +21,16 @@ public class Toy : MonoBehaviour {
             if (!bdScript) bdScript = backdrop.GetComponent<backdrop>();
             if (bdScript.hasCamera) {
                 Interactive = true;
+                FadeAlphaToTarget(10f, 1f);
             } else {
                 Interactive = false;
+                if (transform.position == initialPosition) {
+                    FadeAlphaToTarget(10f, 1f);
+                } else {
+                    if (!FadeAlphaToTarget(1f, 0f)) {
+                        transform.position = initialPosition;
+                    }
+                }
             }
             //if (Interactive) {
             //    Vector3 newPosition = initialPosition;
@@ -32,4 +40,22 @@ public class Toy : MonoBehaviour {
             //}
         }
 	}
+
+    // returns true if it can fade, false if already fully faded.
+    private bool FadeAlphaToTarget(float fadeSpeed, float targetAlpha) {
+        Color currentColor = GetComponent<SpriteRenderer>().material.color;
+
+        if (currentColor.a < targetAlpha) {
+            currentColor.a += fadeSpeed * Time.deltaTime;
+            if (currentColor.a > targetAlpha) currentColor.a = targetAlpha;
+        } else if (currentColor.a > targetAlpha) {
+            currentColor.a -= fadeSpeed * Time.deltaTime;
+            if (currentColor.a < targetAlpha) currentColor.a = targetAlpha;
+        } else {
+            return false;
+        }
+        GetComponent<SpriteRenderer>().material.color = currentColor;
+        return true;
+    }
+
 }
