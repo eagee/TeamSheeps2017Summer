@@ -10,7 +10,9 @@ public class JointTracker : MonoBehaviour
     public BodySourceManager _bodyManager;
     public float scale = 8f;
     public float yOffset = -5f;
+    public float xOffset = 0;
     public int BodyNumber = 0;
+    private Camera m_Camera;
 
     private KinectJointFilter m_jointFilter;
 
@@ -18,6 +20,7 @@ public class JointTracker : MonoBehaviour
     {
         m_jointFilter = new KinectJointFilter();
         m_jointFilter.Init(0.55f, 0.25f, 2.0f, 0.30f, 1.25f);
+        m_Camera = FindObjectOfType<Camera>();
     }
 
     // Get body data from the body manager and track the joint for the active body
@@ -98,8 +101,11 @@ public class JointTracker : MonoBehaviour
             jointPos.X -= midSpinePosition.X;
             jointPos.Y -= midSpinePosition.Y;
             jointPos.Z -= midSpinePosition.Z;
-        
-            Vector3 targetPosition = new Vector3((midSpinePosition.X + jointPos.X) * scale, (yOffset + jointPos.Y) * scale, 0f);
+
+            Vector3 targetPosition = new Vector3((xOffset + jointPos.X) * scale, (yOffset + jointPos.Y) * scale, 0f);
+            targetPosition.x += m_Camera.transform.position.x;
+            targetPosition.y += m_Camera.transform.position.y;
+
             this.transform.position = targetPosition;
         
             //float yPosition = (pos.Y * scale) + (yOffset + m_trackerDot.transform.position.y);
