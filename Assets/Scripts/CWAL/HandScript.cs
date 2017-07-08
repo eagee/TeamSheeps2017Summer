@@ -30,7 +30,7 @@ public class HandScript : MonoBehaviour {
 
     void OnTriggerEnter(Collider coll)
     {
-        if (coll.gameObject.tag == "Interactive")
+        if (coll.gameObject.tag == "toy")
         {
             AttachedObject newObject = new AttachedObject(coll.gameObject, 0.0f, AttachForTime);
             m_AttachedObjects.Add(newObject);

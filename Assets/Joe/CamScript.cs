@@ -34,9 +34,8 @@ public class CamScript : MonoBehaviour {
         // Initial background at the same position as camera, but z of 0f.
         Vector3 bg_position = transform.position;
         bg_position.z = 0f;
-        // Toy is (initially) z of -3f.
         Vector3 toy_position = transform.position;
-        toy_position.z = -3f;
+        toy_position.z = 0f;
 
         new_bg = Instantiate(backgrounds[initialBackdrop], bg_position, Quaternion.identity);
         backdrop bdScript = new_bg.GetComponent<backdrop>();
@@ -93,6 +92,7 @@ public class CamScript : MonoBehaviour {
         Debug.Log("OnTriggerEnter " + other.name, gameObject);
         backdrop bdScript = other.GetComponent<backdrop>();
         Debug.Log("bdScript " + bdScript);
+        GameObject new_toy;
         if (bdScript) {
             bdScript.hasCamera = true;
             // Make sure I have a previous and next backdrop
@@ -113,6 +113,11 @@ public class CamScript : MonoBehaviour {
                 backdrop newBdScript = newBackdrop.GetComponent<backdrop>();
                 newBdScript.bdNumber = newBdNumber;
                 newBdScript.prev = other.gameObject;
+                // give it a toy
+                new_toy = Instantiate(toys[newBdNumber], newBackdrop.transform.position, Quaternion.identity);
+                toy toyScript = new_toy.GetComponent<toy>();
+                toyScript.backdrop = newBackdrop;
+
             }
             if (!bdScript.prev) {
                 // find the left edge
@@ -131,6 +136,10 @@ public class CamScript : MonoBehaviour {
                 backdrop newBdScript = newBackdrop.GetComponent<backdrop>();
                 newBdScript.bdNumber = newBdNumber;
                 newBdScript.next = other.gameObject;
+                // give it a toy
+                new_toy = Instantiate(toys[newBdNumber], newBackdrop.transform.position, Quaternion.identity);
+                toy toyScript = new_toy.GetComponent<toy>();
+                toyScript.backdrop = newBackdrop;
             }
 
         }

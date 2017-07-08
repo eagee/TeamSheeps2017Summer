@@ -40,14 +40,14 @@ public class backdrop : MonoBehaviour {
                 Debug.AssertFormat(next.GetComponent<backdrop>().prev == gameObject, gameObject, "next.prev {0} not equal to me, {1}", next.GetComponent<backdrop>().prev, gameObject);
                 // Debug.Break();
             }
-            Vector3 currPosition = transform.position;
-            if (hasCamera) {
-                currPosition.y = Mathf.Sin(Time.time * 10f);
-                transform.position = currPosition;
-            } else {
-                currPosition.y = 0f;
-                transform.position = currPosition;
-            }
+            //Vector3 currPosition = transform.position;
+            //if (hasCamera) {
+            //    currPosition.y = Mathf.Sin(Time.time * 10f);
+            //    transform.position = currPosition;
+            //} else {
+            //    currPosition.y = 0f;
+            //    transform.position = currPosition;
+            //}
         }
     }
 }

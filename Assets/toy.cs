@@ -22,14 +22,14 @@ public class toy : MonoBehaviour {
             if (bdScript.hasCamera) {
                 Interactive = true;
             } else {
-                //Interactive = false;
+                Interactive = false;
             }
-            if (Interactive) {
-                Vector3 newPosition = initialPosition;
-                newPosition.x = initialPosition.x + 5f * Mathf.Sin(Time.time);
-                newPosition.y = initialPosition.y + 2f * Mathf.Sin(Time.time * 1.2f);
-                transform.position = newPosition;
-            }
+            //if (Interactive) {
+            //    Vector3 newPosition = initialPosition;
+            //    newPosition.x = initialPosition.x + 5f * Mathf.Sin(Time.time);
+            //    newPosition.y = initialPosition.y + 2f * Mathf.Sin(Time.time * 1.2f);
+            //    transform.position = newPosition;
+            //}
         }
 	}
 }
