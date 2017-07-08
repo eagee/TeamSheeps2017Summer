@@ -5,6 +5,7 @@ using UnityEngine;
 public class backdrop : MonoBehaviour {
 
     public GameObject prev = null, next = null;
+    public int bdNumber = -1;
     public bool hasCamera = false;
 
 	// Use this for initialization
