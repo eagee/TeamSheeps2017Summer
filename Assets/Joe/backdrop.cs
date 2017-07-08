@@ -13,6 +13,24 @@ public class backdrop : MonoBehaviour {
 	void Start () {
     }
 
+    /// <summary>
+    /// Locates "Respawn" tag in children and returns position of that transform.
+    /// </summary>
+    public Vector3 GetSpawnPoint()
+    {
+        // Find child object with tag, "Respawn"
+        for (int i = 0; i < this.transform.childCount; i++)
+        {
+            Transform child = this.transform.GetChild(i);
+            if (child.tag == "Respawn")
+            {
+                return child.transform.position;
+            }
+        }
+        Debug.Log("Failed to find child object with Respawn tag :(");
+        return Vector3.zero;
+    }
+
     // Update is called once per frame
     void Update () {
         if (destroyMyself) {

@@ -38,7 +38,7 @@ public class CamScript : MonoBehaviour {
         new_bg = Instantiate(backgrounds[initialBackdrop], bg_position, Quaternion.identity);
         backdrop bdScript = new_bg.GetComponent<backdrop>();
         if (bdScript) bdScript.bdNumber = initialBackdrop;
-        new_toy = Instantiate(toys[initialBackdrop], toy_position, Quaternion.identity);
+        new_toy = Instantiate(toys[initialBackdrop], bdScript.GetSpawnPoint(), Quaternion.identity);
         Toy toyScript = new_toy.GetComponent<Toy>();
         toyScript.backdrop = new_bg;
     }
