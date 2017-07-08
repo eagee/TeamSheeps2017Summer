@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class toy : MonoBehaviour {
+public class Toy : MonoBehaviour {
 
     public GameObject backdrop = null;
     public backdrop bdScript = null;
