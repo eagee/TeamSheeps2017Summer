@@ -10,35 +10,24 @@ public class CamScript : MonoBehaviour {
     private float maxSpeed = 3.2f;
     public float moveCameraDirection = 0f;
 
+    public int initialBackdrop;
     public GameObject[] backgrounds;
-    public int currBackground;
-    public GameObject background;
 
     [HideInInspector]
     public bool moveCamera;
 
     // Use this for initialization
     void Start () {
-        SpriteRenderer srend;
         GameObject new_bg;
 
-        Debug.Log("Starting camera Start()");
+        // Initial background at the same position as camera, but z of 0f.
         Vector3 bg_position = transform.position;
         bg_position.z = 0f;
 
-        // for (int i = 0; i < backgrounds.Length; i++) {
-        for (int i = 0; i < 1; i++) {
-            new_bg = Instantiate(backgrounds[i], bg_position, Quaternion.identity);
-            backdrop bdScript = new_bg.GetComponent<backdrop>();
-            if (bdScript) bdScript.bdNumber = i;
-            srend = new_bg.GetComponent<SpriteRenderer>();
-            bg_position.x += srend.bounds.extents.x;
-            new_bg.transform.position = bg_position;
-            bg_position.x = srend.bounds.max.x;
-        }
-
-        Debug.Log("Ending camera Start()");
-    }
+        new_bg = Instantiate(backgrounds[initialBackdrop], bg_position, Quaternion.identity);
+        backdrop bdScript = new_bg.GetComponent<backdrop>();
+        if (bdScript) bdScript.bdNumber = initialBackdrop;
+     }
 
     void Update() {
         if (moveCameraDirection != 0f && Input.GetKey("space")) {
@@ -104,14 +93,6 @@ public class CamScript : MonoBehaviour {
                 newBdScript.bdNumber = newBdNumber;
                 bdScript.next = newBackdrop;
                 newBdScript.prev = other.gameObject;
-            //} else {
-            //    // If I already have a next, maybe they also have a next. Destroy it.
-            //    backdrop nextScript = bdScript.next.GetComponent<backdrop>();
-            //    if (nextScript.next && !nextScript.hasCamera) {
-            //        GameObject destroyMe = nextScript.next;
-            //        nextScript.next = null;
-            //        Destroy(destroyMe);
-            //    }
             }
             if (!bdScript.prev) {
                 // find the left edge
@@ -131,14 +112,6 @@ public class CamScript : MonoBehaviour {
                 newBdScript.bdNumber = newBdNumber;
                 bdScript.prev = newBackdrop;
                 newBdScript.next = other.gameObject;
-            //} else {
-            //    // If I already have a prev, maybe they also have a prev. Destroy it.
-            //    backdrop prevScript = bdScript.prev.GetComponent<backdrop>();
-            //    if (prevScript.prev && !prevScript.hasCamera) {
-            //        GameObject destroyMe = prevScript.prev;
-            //        prevScript.prev = null;
-            //        Destroy(destroyMe);
-            //    }
             }
 
         }

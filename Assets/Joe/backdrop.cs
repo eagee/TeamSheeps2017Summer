@@ -10,10 +10,6 @@ public class backdrop : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        Debug.Log("Starting backdrop Start()");
-        //hasCamera = false;
-        //prev = next = null;
-        Debug.Log("Ending camera Start()");
     }
 
     // Update is called once per frame
