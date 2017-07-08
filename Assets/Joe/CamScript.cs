@@ -64,6 +64,17 @@ public class CamScript : MonoBehaviour {
         Debug.Log("bdScript " + bdScript);
         if (bdScript) {
             bdScript.hasCamera = false;
+            // If I have a neighbor not on camera, destroy it.
+            if (bdScript.prev && !bdScript.prev.GetComponent<backdrop>().hasCamera) {
+                GameObject destroyMe = bdScript.prev;
+                bdScript.prev = null;
+                Destroy(destroyMe);
+            }
+            if (bdScript.next && !bdScript.next.GetComponent<backdrop>().hasCamera) {
+                GameObject destroyMe = bdScript.next;
+                bdScript.next = null;
+                Destroy(destroyMe);
+            }
         }
     }
 
@@ -93,6 +104,14 @@ public class CamScript : MonoBehaviour {
                 newBdScript.bdNumber = newBdNumber;
                 bdScript.next = newBackdrop;
                 newBdScript.prev = other.gameObject;
+            //} else {
+            //    // If I already have a next, maybe they also have a next. Destroy it.
+            //    backdrop nextScript = bdScript.next.GetComponent<backdrop>();
+            //    if (nextScript.next && !nextScript.hasCamera) {
+            //        GameObject destroyMe = nextScript.next;
+            //        nextScript.next = null;
+            //        Destroy(destroyMe);
+            //    }
             }
             if (!bdScript.prev) {
                 // find the left edge
@@ -112,6 +131,14 @@ public class CamScript : MonoBehaviour {
                 newBdScript.bdNumber = newBdNumber;
                 bdScript.prev = newBackdrop;
                 newBdScript.next = other.gameObject;
+            //} else {
+            //    // If I already have a prev, maybe they also have a prev. Destroy it.
+            //    backdrop prevScript = bdScript.prev.GetComponent<backdrop>();
+            //    if (prevScript.prev && !prevScript.hasCamera) {
+            //        GameObject destroyMe = prevScript.prev;
+            //        prevScript.prev = null;
+            //        Destroy(destroyMe);
+            //    }
             }
 
         }
