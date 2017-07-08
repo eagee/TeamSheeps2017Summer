@@ -11,7 +11,7 @@ public class HandScript : MonoBehaviour {
 
     void OnTriggerEnter(Collider coll)
     {
-        if (coll.gameObject.tag == "Dot")
+        if (coll.gameObject.tag == "Interactive")
         {
             if(coll.gameObject.GetComponent<TinyDotScript>())
                 coll.gameObject.GetComponent<TinyDotScript>().BringToLife();
