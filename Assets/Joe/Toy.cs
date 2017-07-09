@@ -10,9 +10,12 @@ public class Toy : MonoBehaviour {
     Vector3 initialPosition;
     public bool Interactive = false;
     public bool wasJustInteractive = false;
+    public Vector3 lastInteractivePoint;
+    public Collider colly;
 
 	// Use this for initialization
 	void Start () {
+        colly = GetComponent<Collider>();
         initialPosition = transform.position;
 	}
 	
@@ -23,13 +26,20 @@ public class Toy : MonoBehaviour {
             if (bdScript.hasCamera) {
                 Interactive = true;
                 wasJustInteractive = true;
+                lastInteractivePoint = transform.position;
+                colly.enabled = true;
                 FadeAlphaToTarget(10f, 1f);
             } else {
                 Interactive = false;
                 if (wasJustInteractive) {
-                    if (!FadeAlphaAndPositionToTarget(1f, 0f, newToyLocation())) {
+                    Vector3 newToyLoc = newToyLocation();
+                    float dist = Vector3.Distance(lastInteractivePoint, newToyLoc);
+                    Debug.Log("Distance to travel: " + dist, gameObject);
+                    colly.enabled = false;
+                    if (!FadeAlphaAndPositionToTarget(7f / dist, 0f, lastInteractivePoint, newToyLoc)) {
                         transform.position = initialPosition;
                         wasJustInteractive = false;
+                        colly.enabled = true;
                     }
                 } else {
                     // FadeAlphaToTarget(10f, 0.5f);
@@ -71,7 +81,7 @@ public class Toy : MonoBehaviour {
     }
 
     // returns true if it can fade, false if already fully faded.
-    private bool FadeAlphaAndPositionToTarget(float fadeSpeed, float targetAlpha, Vector3 targetPosition) {
+    private bool FadeAlphaAndPositionToTarget(float fadeSpeed, float targetAlpha, Vector3 origPosition, Vector3 targetPosition) {
         Color currentColor = GetComponent<SpriteRenderer>().material.color;
         int direction = 0;
         if (currentColor.a < targetAlpha) {
@@ -86,10 +96,13 @@ public class Toy : MonoBehaviour {
             return false;
         }
         GetComponent<SpriteRenderer>().material.color = currentColor;
-        if (direction == 1)
-            transform.position = Vector3.Lerp(transform.position, targetPosition, currentColor.a);
-        else if (direction == -1)
-            transform.position = Vector3.Lerp(transform.position, targetPosition, (1f - currentColor.a));
+        if (direction == 1) {
+            Debug.Log("1 " + currentColor.a, gameObject);
+            transform.position = Vector3.Lerp(origPosition, targetPosition, currentColor.a);
+        } else if (direction == -1) {
+            Debug.Log("2 " + currentColor.a, gameObject);
+            transform.position = Vector3.Lerp(origPosition, targetPosition, (1f - currentColor.a));
+        }
 
         return true;
     }
