@@ -9,6 +9,7 @@ public class Toy : MonoBehaviour {
 
     Vector3 initialPosition;
     public bool Interactive = false;
+    public bool wasJustInteractive = false;
 
 	// Use this for initialization
 	void Start () {
@@ -21,15 +22,17 @@ public class Toy : MonoBehaviour {
             if (!bdScript) bdScript = backdrop.GetComponent<backdrop>();
             if (bdScript.hasCamera) {
                 Interactive = true;
+                wasJustInteractive = true;
                 FadeAlphaToTarget(10f, 1f);
             } else {
                 Interactive = false;
-                if (transform.position == initialPosition) {
-                    FadeAlphaToTarget(10f, 1f);
-                } else {
-                    if (!FadeAlphaToTarget(1f, 0f)) {
+                if (wasJustInteractive) {
+                    if (!FadeAlphaAndPositionToTarget(1f, 0f, newToyLocation())) {
                         transform.position = initialPosition;
+                        wasJustInteractive = false;
                     }
+                } else {
+                    // FadeAlphaToTarget(10f, 0.5f);
                 }
             }
             //if (Interactive) {
@@ -40,6 +43,15 @@ public class Toy : MonoBehaviour {
             //}
         }
 	}
+
+    public Vector3 newToyLocation() {
+        GameObject[] foundObjects = GameObject.FindGameObjectsWithTag("toy");
+        foreach (GameObject foundObject in foundObjects) {
+            if (foundObject.GetComponent<Toy>().Interactive)
+                return foundObject.transform.position;
+        }
+        return Vector3.zero;
+    }
 
     // returns true if it can fade, false if already fully faded.
     private bool FadeAlphaToTarget(float fadeSpeed, float targetAlpha) {
@@ -55,6 +67,30 @@ public class Toy : MonoBehaviour {
             return false;
         }
         GetComponent<SpriteRenderer>().material.color = currentColor;
+        return true;
+    }
+
+    // returns true if it can fade, false if already fully faded.
+    private bool FadeAlphaAndPositionToTarget(float fadeSpeed, float targetAlpha, Vector3 targetPosition) {
+        Color currentColor = GetComponent<SpriteRenderer>().material.color;
+        int direction = 0;
+        if (currentColor.a < targetAlpha) {
+            currentColor.a += fadeSpeed * Time.deltaTime;
+            direction = 1;
+            if (currentColor.a > targetAlpha) currentColor.a = targetAlpha;
+        } else if (currentColor.a > targetAlpha) {
+            currentColor.a -= fadeSpeed * Time.deltaTime;
+            direction = -1;
+            if (currentColor.a < targetAlpha) currentColor.a = targetAlpha;
+        } else {
+            return false;
+        }
+        GetComponent<SpriteRenderer>().material.color = currentColor;
+        if (direction == 1)
+            transform.position = Vector3.Lerp(transform.position, targetPosition, currentColor.a);
+        else if (direction == -1)
+            transform.position = Vector3.Lerp(transform.position, targetPosition, (1f - currentColor.a));
+
         return true;
     }
 
