@@ -31,26 +31,18 @@ public class Toy : MonoBehaviour {
                 FadeAlphaToTarget(10f, 1f);
             } else {
                 Interactive = false;
+                // If we've just finished being interactive, fade out to the new toy.
                 if (wasJustInteractive) {
                     Vector3 newToyLoc = newToyLocation();
                     float dist = Vector3.Distance(lastInteractivePoint, newToyLoc);
-                    Debug.Log("Distance to travel: " + dist, gameObject);
                     colly.enabled = false;
                     if (!FadeAlphaAndPositionToTarget(10f / dist, 0f, lastInteractivePoint, newToyLoc)) {
                         transform.position = initialPosition;
                         wasJustInteractive = false;
                         colly.enabled = true;
                     }
-                } else {
-                    // FadeAlphaToTarget(10f, 0.5f);
                 }
             }
-            //if (Interactive) {
-            //    Vector3 newPosition = initialPosition;
-            //    newPosition.x = initialPosition.x + 5f * Mathf.Sin(Time.time);
-            //    newPosition.y = initialPosition.y + 2f * Mathf.Sin(Time.time * 1.2f);
-            //    transform.position = newPosition;
-            //}
         }
 	}
 
@@ -97,10 +89,8 @@ public class Toy : MonoBehaviour {
         }
         GetComponent<SpriteRenderer>().material.color = currentColor;
         if (direction == 1) {
-            Debug.Log("1 " + currentColor.a, gameObject);
             transform.position = Vector3.Lerp(origPosition, targetPosition, currentColor.a);
         } else if (direction == -1) {
-            Debug.Log("2 " + currentColor.a, gameObject);
             transform.position = Vector3.Lerp(origPosition, targetPosition, (1f - currentColor.a));
         }
 
