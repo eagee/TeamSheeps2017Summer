@@ -10,13 +10,13 @@ public class PropCane : MonoBehaviour {
     public float lastMoved;
     public Collider colly;
     public Vector3 initialPosition, previousPosition;
-    public float stillTime = 1f;
+    public float stillTime = 0.5f;
 
 	// Use this for initialization
 	void Start () {
         colly = GetComponent<Collider>();
         initialPosition = previousPosition = transform.position;
-        timeToStart = Time.time + 0.5f;
+        timeToStart = Time.time + 1f;
 	}
 	
 	// Update is called once per frame
@@ -24,6 +24,7 @@ public class PropCane : MonoBehaviour {
         if (stillNow) return;
         if (Time.time < timeToStart) {
             // ignore any initial movement
+            Debug.Log("Ignoring movement at time " + Time.time + " because it's not yet " + timeToStart, gameObject);
             initialPosition = transform.position;
             return;
         }
