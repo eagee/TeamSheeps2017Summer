@@ -89,6 +89,7 @@ public class JointTracker : MonoBehaviour
         {
             GetComponent<Rigidbody>().isKinematic = true;
             //GetComponent<SpriteRenderer>().enabled = true;
+            GetComponentInChildren<TrailRenderer>().enabled = true;
             FadeAlphaToTarget(2f, 1.0f);
             //GetComponentInChildren<SpriteRenderer>().enabled = true;
 
@@ -116,6 +117,7 @@ public class JointTracker : MonoBehaviour
         }
         else
         {
+            GetComponentInChildren<TrailRenderer>().enabled = false;
             //GetComponent<Rigidbody>().isKinematic = false;
             //GetComponent<SpriteRenderer>().enabled = false;
             FadeAlphaToTarget(2f, 0.0f);
