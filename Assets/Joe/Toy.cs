@@ -36,7 +36,7 @@ public class Toy : MonoBehaviour {
                     float dist = Vector3.Distance(lastInteractivePoint, newToyLoc);
                     Debug.Log("Distance to travel: " + dist, gameObject);
                     colly.enabled = false;
-                    if (!FadeAlphaAndPositionToTarget(7f / dist, 0f, lastInteractivePoint, newToyLoc)) {
+                    if (!FadeAlphaAndPositionToTarget(10f / dist, 0f, lastInteractivePoint, newToyLoc)) {
                         transform.position = initialPosition;
                         wasJustInteractive = false;
                         colly.enabled = true;
