@@ -27,7 +27,6 @@ public class CameraFollow2DEx : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-
         // only update lookahead pos if accelerating or changed direction
         float xMoveDelta = (target.position - m_LastTargetPosition).x;
 
@@ -44,10 +43,11 @@ public class CameraFollow2DEx : MonoBehaviour
 
         Vector3 aheadTargetPos = target.position + m_LookAheadPos + Vector3.forward * m_OffsetZ;
         Vector3 newPos = Vector3.SmoothDamp(transform.position, aheadTargetPos, ref m_CurrentVelocity, damping);
-        newPos.x += yOffset;
 
         transform.position = newPos;
 
-        m_LastTargetPosition = target.position;
+        Vector3 newTargetPosition = target.position;
+        newTargetPosition.y += yOffset;
+        m_LastTargetPosition = newTargetPosition;
     }
 }
