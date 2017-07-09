@@ -45,7 +45,7 @@ public class CamScript : MonoBehaviour {
         GameObject[] foundObjects = GameObject.FindGameObjectsWithTag("toy");
         foreach (GameObject foundObject in foundObjects) {
             if (foundObject.GetComponent<Toy>().Interactive)
-                GetComponent<UnityStandardAssets._2D.Camera2DFollow>().target = foundObject.transform;
+                GetComponent<CameraFollow2DEx>().target = foundObject.transform;
         }
 
     }
