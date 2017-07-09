@@ -6,6 +6,7 @@ public class PropCane : MonoBehaviour {
 
     public bool hasMoved = false;
     public bool stillNow = false;
+    public float timeToStart;
     public float lastMoved;
     public Collider colly;
     public Vector3 initialPosition, previousPosition;
@@ -15,11 +16,17 @@ public class PropCane : MonoBehaviour {
 	void Start () {
         colly = GetComponent<Collider>();
         initialPosition = previousPosition = transform.position;
+        timeToStart = Time.time + 0.5f;
 	}
 	
 	// Update is called once per frame
 	void Update () {
         if (stillNow) return;
+        if (Time.time < timeToStart) {
+            // ignore any initial movement
+            initialPosition = transform.position;
+            return;
+        }
         if (hasMoved) {
             // still moving?
             if (Vector3.Distance(transform.position, previousPosition) > 0.05f) {
