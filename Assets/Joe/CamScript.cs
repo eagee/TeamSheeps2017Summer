@@ -113,7 +113,7 @@ public class CamScript : MonoBehaviour {
                 newBdScript.bdNumber = newBdNumber;
                 newBdScript.prev = other.gameObject;
                 // give it a toy
-                new_toy = Instantiate(toys[newBdNumber], newBackdrop.transform.position, Quaternion.identity);
+                new_toy = Instantiate(toys[newBdNumber], newBdScript.GetSpawnPoint(), Quaternion.identity);
                 Toy toyScript = new_toy.GetComponent<Toy>();
                 toyScript.backdrop = newBackdrop;
 
@@ -136,7 +136,7 @@ public class CamScript : MonoBehaviour {
                 newBdScript.bdNumber = newBdNumber;
                 newBdScript.next = other.gameObject;
                 // give it a toy
-                new_toy = Instantiate(toys[newBdNumber], newBackdrop.transform.position, Quaternion.identity);
+                new_toy = Instantiate(toys[newBdNumber], newBdScript.GetSpawnPoint(), Quaternion.identity);
                 Toy toyScript = new_toy.GetComponent<Toy>();
                 toyScript.backdrop = newBackdrop;
             }
