@@ -19,9 +19,33 @@ public class DropAfterTime : MonoBehaviour {
         timeToHang -= Time.deltaTime;
         if (timeToHang < 0f) {
             rb.constraints = RigidbodyConstraints2D.None;
+            //FadeAlphaToTarget(1.0f, 0.0f);
         }
         if (timeToHang < hangTime * -5f) {
             GameObject.Destroy(gameObject);
         }	
 	}
+
+    // returns true if it can fade, false if already fully faded.
+    private bool FadeAlphaToTarget(float fadeSpeed, float targetAlpha)
+    {
+        Color currentColor = GetComponent<SpriteRenderer>().material.color;
+
+        if (currentColor.a < targetAlpha)
+        {
+            currentColor.a += fadeSpeed * Time.deltaTime;
+            if (currentColor.a > targetAlpha) currentColor.a = targetAlpha;
+        }
+        else if (currentColor.a > targetAlpha)
+        {
+            currentColor.a -= fadeSpeed * Time.deltaTime;
+            if (currentColor.a < targetAlpha) currentColor.a = targetAlpha;
+        }
+        else
+        {
+            return false;
+        }
+        GetComponent<SpriteRenderer>().material.color = currentColor;
+        return true;
+    }
 }
